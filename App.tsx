@@ -1,21 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Login from './src/pages/Login';
+import AdminDashboard from './src/pages/AdminDashboard';
+import StaffDashboard from './src/pages/StaffDashboard';
+import AddUser from './src/pages/AddUser'
+import AddService from './src/pages/AddService';
+import AppointmentDetails from './src/pages/AppointmentDetails';
+import ViewAppointments from './src/pages/ViewAppointments';
+import ViewUsers from './src/pages/ViewUsers';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      {/* <Text>Open up App.tsx to start working on your app!</Text> */}
-      <Text>Manager Application</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
+        <Stack.Screen name="StaffDashboard" component={StaffDashboard} />
+        <Stack.Screen name="AddUser" component={AddUser} options={({ route }) => ({title: "Add "+route.params.userRole || 'Add User'})} />
+        <Stack.Screen name="AddService" component={AddService} />
+        <Stack.Screen name ='Appointments' component={ViewAppointments} />
+        <Stack.Screen name="AppointmentDetails" component={AppointmentDetails} />
+        <Stack.Screen name ='ViewUsers' component={ViewUsers} options={({ route }) => ({title: "View "+route.params.userRole || 'Add User'})}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
