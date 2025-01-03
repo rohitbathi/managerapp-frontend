@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     borderRadius: 5,
     fontSize: 16,
+    borderWidth: 1.5,
   },
   cardLabel: {
     fontWeight: "bold",
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     width: "100%", // Match card width
     justifyContent: "center",
     alignItems: "left",
-    margin:20,
+    marginTop:20,
   },
 });
 

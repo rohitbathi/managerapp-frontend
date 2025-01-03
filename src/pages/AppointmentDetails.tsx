@@ -13,7 +13,7 @@ import {
 const AppointmentDetails = ({ route }) => {
   const [appointment, setAppointment] = useState(route.params.appointment);
   const [selectedStaff, setSelectedStaff] = useState(null);
-
+  const user = route.params.user
   const [staffList, setStaffList] = useState([]);
 
   useEffect(() => {
@@ -60,13 +60,13 @@ const AppointmentDetails = ({ route }) => {
     }
   };
 
-  const handleStaffSelection = (staffId) => {
-    setSelectedStaff(staffId);
+  const handleStaffSelection = (staff) => {
+    setSelectedStaff(staff);
     // Alert.alert('Staff Selected', `You have selected ${staffList.find(staff => staff.id === staffId).name}`);
 
     changeAppointment({
       ...appointment,
-      staff_id: staffId,
+      staffName: staff,
       status: "Staff Appointed",
     });
   };
@@ -75,8 +75,7 @@ const AppointmentDetails = ({ route }) => {
     // payment calls
     changeAppointment({
       ...appointment,
-      status: "Completed",
-      paymentstauts: "Paid",
+      status: "Payment Done",
     });
   };
 
@@ -102,24 +101,23 @@ const AppointmentDetails = ({ route }) => {
         <Text style={styles.label}>
           Staff Name :{" "}
           <Text style={styles.value}>
-            {staffList.find((staff) => staff.id === appointment.staff_id)
-              ?.name || "No Staff Assigned"}
+            {/* {staffList.find((staff) => staff.id === appointment.staff_id)
+              ?.name || "No Staff Assigned"} */}
+            {appointment.staffName || "Staff Not Assigned"}
           </Text>
         </Text>
-        <Text style={styles.label}>
+        {/* <Text style={styles.label}>
           Payment :{" "}
-          <Text style={styles.value}>
-            {appointment.payment || "N/A"}
-          </Text>
+          <Text style={styles.value}>{appointment.payment || "N/A"}</Text>
         </Text>
         <Text style={styles.label}>
           Payment Status :{" "}
           <Text style={styles.value}>
             {appointment.paymentstauts || "UnPaid"}
           </Text>
-        </Text>
+        </Text> */}
 
-        {appointment.status === "Confirmed" && (
+        {appointment.status === "Confirmed"  && user.role === "Admin" && (
           <View style={styles.pickerContainer}>
             <Text style={styles.label}>Select Staff:</Text>
             <Picker
@@ -130,19 +128,19 @@ const AppointmentDetails = ({ route }) => {
                 <Picker.Item
                   key={staff.id}
                   label={staff.name}
-                  value={staff.id}
+                  value={staff.name}
                 />
               ))}
             </Picker>
           </View>
         )}
 
-        {appointment.status === "Waitlist" && (
+        {appointment.status === "Waitlist" && user.role === "Admin" && (
           <View style={styles.buttonsContainer}>
-             <View style={styles.button}>
+            <View style={styles.button}>
               <Button
                 title="Cancel"
-                color = 'red'
+                color="red"
                 onPress={() => {
                   changeAppointment({ ...appointment, status: "Cancelled" });
                 }}
@@ -157,11 +155,16 @@ const AppointmentDetails = ({ route }) => {
                 }}
               />
             </View>
-           
           </View>
         )}
 
-        {appointment.status === "Staff Appointed" && (
+        {appointment.status === "Staff Appointed" && user.role === "Admin" && (
+          <View style={styles.button}>
+            <Button title="Payment" onPress={handlePayment} />
+          </View>
+        )}
+
+        {appointment.status === "Payment Done" && user.role === "Staff" && (
           <View style={styles.button}>
             <Button
               title="Start Service"
@@ -172,9 +175,14 @@ const AppointmentDetails = ({ route }) => {
           </View>
         )}
 
-        {appointment.status === "In Progress" && (
+        {appointment.status === "In Progress" && user.role === "Staff" && (
           <View style={styles.button}>
-            <Button title="Payment" onPress={handlePayment} />
+            <Button
+              title="Complete" onPress={()=>changeAppointment({
+                ...appointment,
+                status: "Completed",
+              })}
+            />
           </View>
         )}
       </View>

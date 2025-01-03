@@ -18,38 +18,45 @@ const ViewUsers = ({ route }) => {
             id: 1,
             Name: "John Doe",
             Phone: "1234567890",
-            email: "123@gmail.com",
-            status: "Active",
+            email: "john123@gmail.com",
+            availability: "Available",
+            role: "Staff",
             specilisation: "Hair cut",
-            HourlyWage: "$20",
+            hourlyWage: "$20",
           },
           {
             id: 2,
-            customerName: "Jane Smith",
-            serviceName: "Massage",
-            slot: "11:00 AM - 12:00 PM",
-            status: "Waitlist",
+            Name: "Jane Smith",
+            Phone: "893245617",
+            email: "jane123@gmail.com",
+            role: "Customer",
           },
           {
             id: 3,
-            customerName: "Robert Brown",
-            serviceName: "Manicure",
-            slot: "12:30 PM - 1:00 PM",
-            status: "Staff Appointed",
+            Name: "John cena",
+            Phone: "9087654321",
+            email: "john1234@gmail.com",
+            availability: "Not Available",
+            role: "Staff",
+            specilisation: "Hair cut",
+            hourlyWage: "$20",
           },
           {
             id: 4,
-            customerName: "Emily White",
-            serviceName: "Facial",
-            slot: "2:00 PM - 3:00 PM",
-            status: "In Progress",
+            Name: "Danies Lilly",
+            Phone: "9999999999",
+            email: "danies123@gmail.com",
+            role: "Customer",
           },
           {
-            id: 5,
-            customerName: "Chris Black",
-            serviceName: "Pedicure",
-            slot: "3:30 PM - 4:00 PM",
-            status: "Completed",
+            id: 4,
+            Name: "Andrew Strauss",
+            Phone: "8234567109",
+            email: "andrew123@gmail.com",
+            availability: "Available",
+            role: "Staff",
+            specilisation: "Maincure",
+            hourlyWage: "$15",
           },
         ];
 
@@ -62,10 +69,12 @@ const ViewUsers = ({ route }) => {
     loadUsers();
   }, []);
 
+  const filteredUsers = userList.filter((item) => item.role === userRole);
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={userList}
+        data={filteredUsers}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.cardContainer}>
@@ -84,11 +93,11 @@ const ViewUsers = ({ route }) => {
                 <Text style={styles.cardValue}>{item.email || "N/A"}</Text>
               </Text>
 
-              {userRole === "Customer" && (
+              {/* {userRole === "Customer" && (
                 <Text style={styles.cardLabel}>
                   Status:<Text style={styles.cardValue}>{item.status}</Text>
                 </Text>
-              )}
+              )} */}
 
               {userRole === "Staff" && (
                 <>
@@ -100,9 +109,9 @@ const ViewUsers = ({ route }) => {
                   </Text>
 
                   <Text style={styles.cardLabel}>
-                    Avaliablity:
+                    Availability:
                     <Text style={styles.cardValue}>
-                      {item.avaliablity|| "Not Available"}
+                      {item.availability || "Not Available"}
                     </Text>
                   </Text>
 

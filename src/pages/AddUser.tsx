@@ -105,7 +105,7 @@ const AddUser = ({ route }) => {
           </>
         )}
         <View style={styles.button}>
-          <Button title={"Add "+ {role}} onPress={handleSubmit} />
+          <Button title={"Add "+ role} onPress={handleSubmit} />
         </View>
       </View>
     </ScrollView>

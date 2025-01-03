@@ -5,13 +5,17 @@ const AdminDashboard = () => {
 
   const navigation = useNavigation();
 
+  const user =  {
+    role : "Admin",
+  }
+
   const handleLogout = () =>{
     navigation.navigate("Login");
   }
 
   return (
     <View style={styles.container}>
-      <Button title='view appointments' onPress= {()=>navigation.navigate("Appointments" )}/>
+      <Button title='view appointments' onPress= {()=>navigation.navigate("Appointments" ,{user})}/>
       <Button title='Add Admin' onPress= {()=>navigation.navigate("AddUser",{userRole:"Admin"} )}/>
       <Button title='Add Staff' onPress= {()=>navigation.navigate("AddUser",{userRole:"Staff"} )}/>
       <Button title='Add Customer' onPress= {()=>navigation.navigate("AddUser",{userRole:"Customer"} )}/>

@@ -28,9 +28,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    width: "50%",
+    width: "40%",
     paddingTop: 10,
-    marignHorizontal:10,
+    marginHorizontal : 10,
     justifyContent: "center",
     alignItems: "left",
   },

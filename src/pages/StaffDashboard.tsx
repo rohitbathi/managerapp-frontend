@@ -11,17 +11,7 @@ const StaffDashboard = () => {
     <View style={styles.container}>
       <Button
         title="view appointments"
-        onPress={() => navigation.navigate("Appointments")}
-      />
-      <Button
-        title="View Customers"
-        onPress={() =>
-          navigation.navigate("ViewUsers", { userRole: "Customer" })
-        }
-      />
-      <Button
-        title="Add Customer"
-        onPress={() => navigation.navigate("AddUser", { userRole: "Customer" })}
+        onPress={() => navigation.navigate("Appointments",{user:{role: "Staff"}})}
       />
       <Button title="Log Out" onPress={handleLogout} />
     </View>
