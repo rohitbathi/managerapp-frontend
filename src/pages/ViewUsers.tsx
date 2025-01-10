@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "../styles/AppointmentsStyles";
+import { fetchCustomers, fetchStaff } from "../services/api";
 
 const ViewUsers = ({ route }) => {
   const navigation = useNavigation();
@@ -12,56 +13,15 @@ const ViewUsers = ({ route }) => {
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        // const data = await fetchUsers({role : UserRole});
-        const dummyUsers = [
-          {
-            id: 1,
-            Name: "John Doe",
-            Phone: "1234567890",
-            email: "john123@gmail.com",
-            availability: "Available",
-            role: "Staff",
-            specilisation: "Hair cut",
-            hourlyWage: "$20",
-          },
-          {
-            id: 2,
-            Name: "Jane Smith",
-            Phone: "893245617",
-            email: "jane123@gmail.com",
-            role: "Customer",
-          },
-          {
-            id: 3,
-            Name: "John cena",
-            Phone: "9087654321",
-            email: "john1234@gmail.com",
-            availability: "Not Available",
-            role: "Staff",
-            specilisation: "Hair cut",
-            hourlyWage: "$20",
-          },
-          {
-            id: 4,
-            Name: "Danies Lilly",
-            Phone: "9999999999",
-            email: "danies123@gmail.com",
-            role: "Customer",
-          },
-          {
-            id: 4,
-            Name: "Andrew Strauss",
-            Phone: "8234567109",
-            email: "andrew123@gmail.com",
-            availability: "Available",
-            role: "Staff",
-            specilisation: "Maincure",
-            hourlyWage: "$15",
-          },
-        ];
-
-        setUserList(dummyUsers);
-        // setUserList(data)
+        if(userRole==='Customers'){
+          const data = await fetchCustomers();
+          setUserList(data);
+        }
+        else{
+          const data = await fetchStaff();
+          setUserList(data);
+        }
+       
       } catch (error) {
         alert("Error fetching appointments!");
       }
@@ -93,18 +53,18 @@ const ViewUsers = ({ route }) => {
                 <Text style={styles.cardValue}>{item.email || "N/A"}</Text>
               </Text>
 
-              {/* {userRole === "Customer" && (
+              {userRole === "Customer" && (
                 <Text style={styles.cardLabel}>
                   Status:<Text style={styles.cardValue}>{item.status}</Text>
                 </Text>
-              )} */}
+              )}
 
               {userRole === "Staff" && (
                 <>
                   <Text style={styles.cardLabel}>
-                    Specialisation:
+                    Service:
                     <Text style={styles.cardValue}>
-                      {item.specilisation || "N/A"}
+                      {item.servicename || "N/A"}
                     </Text>
                   </Text>
 

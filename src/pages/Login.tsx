@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { authenticateUser } from "../services/api";
 import { styles } from "../styles/LoginStyles";
@@ -13,28 +12,23 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       // const response = await authenticateUser({ email, password });
-      // navigation.navigate('AdminDashboard');
+      // console.log(email, password);
+      // navigation.navigate("AdminDashboard");
       // navigation.navigate('StaffDashboard');
+      // const role = response.role;
+      // console.log(role);
+      const role = 'admin';
 
-      // if (response.role === 'admin') {
-      //   navigation.navigate('AdminDashboard');
-      // } else if (response.role === 'staff') {
-      //   navigation.navigate('StaffDashboard');
-      // } else {
-      //   alert('Invalid role!');
+      if (role === "admin") {
+        navigation.navigate("AdminDashboard", { role });
+      } else if (role === "staff") {
+        navigation.navigate("StaffDashboard", { role });
+      } else {
+        alert("Invalid role!");
+      }
+      // if(password === ""){
+      //   Alert.alert("No Password");
       // }
-      if(password === ""){
-        Alert.alert("No Password");
-      }
-      else{
-        if (email === "admin123@gmail.com") {
-          navigation.navigate("AdminDashboard");
-        } else if (email === "staff123@gmail.com") {
-          navigation.navigate("StaffDashboard");
-        } else {
-          Alert, alert("Invalid Email");
-        }
-      }
       setEmail("");
       setPassword("");
     } catch (error) {

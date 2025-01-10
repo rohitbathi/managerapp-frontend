@@ -3,49 +3,63 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
     paddingHorizontal: 10,
     paddingVertical: 10,
     height: "100%",
+    fontFamily: "Open Sans",
   },
   navbar: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-  },
-  emptyspace: {
-    width: 0,
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between", // Distribute space evenly between date and status containers
+    alignItems: "center",
+    padding: 10,
+    maxHeight: 50,
+  },
+  dateContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   fliterContainer: {
-    width: "25%",
-    display: "flex",
+    flex: 1,
     flexDirection: "row",
-    alignItems: "right",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   label: {
-    paddingTop: 15,
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 5,
+    maxWidth: 150,
+  },
+  dateText: {
     flex: 1,
-    marginright: 10,
-    height: "100%",
+    maxWidth: 100,
     fontSize: 16,
   },
-  pickerelement: {
+  pickerElement: {
     flex: 2,
-    height: "100%",
+    maxWidth: 250,
     fontSize: 16,
+  },
+  datePicker: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+    padding: 10,
   },
   flatcontainer: {
-    flex: 1,
+    flex: 2,
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom:100,
+    marginBottom: 100,
   },
   cardContainer: {
     flex: 1,
     flexDirection: "row",
-    marginVertical:10,
+    marginVertical: 10,
     width: 300,
   },
   card: {
@@ -63,16 +77,15 @@ const styles = StyleSheet.create({
   cardValue: {
     fontWeight: "light",
   },
-  buttonscontainer:{
-    width:"100%",
-    flexDirection:'row',
-
+  buttonscontainer: {
+    width: "100%",
+    flexDirection: "row",
   },
   button: {
     width: "100%", // Match card width
     justifyContent: "center",
     alignItems: "left",
-    marginTop:20,
+    marginTop: 20,
   },
 });
 

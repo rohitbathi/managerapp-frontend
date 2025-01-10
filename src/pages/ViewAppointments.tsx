@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, Button, Alert, Dimensions } from "react-native";
+import { format } from "date-fns";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   fetchAdminAppointments,
   fetchStaffAppointments,
@@ -10,24 +12,21 @@ import { styles } from "../styles/AppointmentsStyles";
 
 const ViewAppointments = ({ route }) => {
   const navigation = useNavigation();
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      customerName: "John Doe",
-      serviceName: "Haircut",
-      slot: "10:00 AM - 10:30 AM",
-      status: "Confirmed",
-    },
-  ]);
+  const [appointments, setAppointments] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("All");
-  const user = route.params.user;
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const role = route.params.role;
 
   useEffect(() => {
-    const loadAppointments = async () => {
+    const loadAppointments = async (date) => {
       try {
-        if (user.role === "Admin") {
-          // const adminAppointments = await fetchAdminAppointments();
-          // setAppointments(adminAppointments)
+        if (role === "admin") {
+          // const adminAppointments = await fetchAdminAppointments(date);
+          // setAppointments(adminAppointments,selectedDate);
+          console.log(date);
           const dummyAppointments = [
             {
               id: 1,
@@ -35,6 +34,7 @@ const ViewAppointments = ({ route }) => {
               serviceName: "Haircut",
               slot: "10:00 AM - 10:30 AM",
               status: "Confirmed",
+              date: "2025-01-10",
             },
             {
               id: 2,
@@ -42,14 +42,16 @@ const ViewAppointments = ({ route }) => {
               serviceName: "Massage",
               slot: "11:00 AM - 12:00 PM",
               status: "Waitlist",
+              date: "2025-01-11",
             },
             {
               id: 3,
               customerName: "Robert Brown",
               serviceName: "Manicure",
               slot: "12:30 PM - 1:00 PM",
-              status: "Staff Appointed",
-              staffName : "Dane Smith"
+              status: "Payment Done",
+              staffName: "Dane Smith",
+              date: "2025-01-10",
             },
             {
               id: 5,
@@ -57,88 +59,108 @@ const ViewAppointments = ({ route }) => {
               serviceName: "Pedicure",
               slot: "3:30 PM - 4:00 PM",
               status: "Completed",
-              staffName : "Lilly Adams"
+              staffName: "Lilly Adams",
+              date: "2025-01-11",
             },
           ];
           setAppointments(dummyAppointments);
         } else {
-          // const staffAppointments = await fetchStaffAppointments({id = user.id, payment_status : "paid"});
-          // setAppointments(staffAppointments)
-          const dummyStaffAppointments = [
-            {
-              id: 1,
-              customerName: "John Doe",
-              serviceName: "Haircut",
-              slot: "10:00 AM - 10:30 AM",
-              staffName : "John Cena",
-              status: "Payment Done",
-            },
-            {
-              id: 2,
-              customerName: "Jane Smith",
-              serviceName: "Haircut",
-              slot: "11:00 AM - 12:00 PM",
-              staffName : "John Cena",
-              status: "In Progress",
-            },
-            {
-              id: 3,
-              customerName: "Robert Brown",
-              serviceName: "Haircut",
-              slot: "12:30 PM - 1:00 PM",
-              staffName : "John Cena",
-              status: "Completed",
-            },
-          ];
-          setAppointments(dummyStaffAppointments)
+          const staffAppointments = await fetchStaffAppointments(date);
+          setAppointments(staffAppointments);
+          // const dummyStaffAppointments = [
+          //   {
+          //     id: 1,
+          //     customerName: "John Doe",
+          //     serviceName: "Haircut",
+          //     slot: "10:00 AM - 10:30 AM",
+          //     staffName: "John Cena",
+          //     status: "Payment Done",
+          //   },
+          //   {
+          //     id: 2,
+          //     customerName: "Jane Smith",
+          //     serviceName: "Haircut",
+          //     slot: "11:00 AM - 12:00 PM",
+          //     staffName: "John Cena",
+          //     status: "In Progress",
+          //   },
+          //   {
+          //     id: 3,
+          //     customerName: "Robert Brown",
+          //     serviceName: "Haircut",
+          //     slot: "12:30 PM - 1:00 PM",
+          //     staffName: "John Cena",
+          //     status: "Completed",
+          //   },
+          // ];
+          // setAppointments(dummyStaffAppointments);
         }
       } catch (error) {
         alert("Error fetching appointments!");
       }
     };
-    loadAppointments();
+    loadAppointments(selectedDate);
   }, []);
 
   const clickhandler = (appointment) => {
     try {
       // Alert.alert('Button Pressed')
-      navigation.navigate("AppointmentDetails", { appointment, user });
+      navigation.navigate("AppointmentDetails", { appointment, role });
     } catch (error) {
       Alert.alert("Error in viewing Appointment Details");
     }
   };
 
+  const handleDateChange = async (event, date) => {
+    console.log(date);
+    setShowDatePicker(false);
+    if (date) {
+      setSelectedDate(date);
+      const newDate = selectedDate.toISOString().slice(0, 10); // Format date for API call
+      await fetchAppointments(newDate); // Fetch appointments for the new date
+    }
+  };
   const getButtonTitle = (status) => {
-    switch (status) {
-      case "Waitlist":
-        return "Confirm/Cancel";
-      case "Confirmed":
-        return "Appoint Staff";
-      case "Staff Appointed":
-        return "Payment";
-      case "Payment Done":
-        return "Start Service";
-      case "In Progress":
-        return "Complete";
-      default:
-        return "View Details";
+    if (role === "admin") {
+      switch (status) {
+        case "Waitlist":
+          return "Confirm/Cancel";
+        case "Confirmed":
+          return "Payment";
+        default:
+          return "View Details";
+      }
+    } else {
+      switch (status) {
+        case "Payment Done":
+          return "Start Service";
+        case "In Progress":
+          return "Complete";
+        default:
+          return "View Details";
+      }
     }
   };
 
   const getButtonColor = (status) => {
-    switch (status) {
-      case "Waitlist":
-        return "red";
-      case "Confirmed":
-        return "orange";
-      case "Staff Appointed":
-        return "green";
-      case "Payment Done":
-        return "blue";
-      case "In Progress":
-        return "green";
-      default:
-        return "black";
+    if (role === "admin") {
+      switch (status) {
+        case "Waitlist":
+          return "red";
+        case "Confirmed":
+          return "green";
+        default:
+          return "black";
+      }
+    } else {
+      switch (status) {
+        case "Payment Done":
+          return "blue";
+        case "In Progress":
+          return "green";
+        default:
+          return "black";
+      }
     }
   };
 
@@ -153,37 +175,50 @@ const ViewAppointments = ({ route }) => {
     <View style={styles.container}>
       {/* <Text style={styles.title}>Apppiontments</Text> */}
       <View style={styles.navbar}>
-        <View style={styles.emptyspace}></View>
+        <View style={styles.dateContainer}>
+          <Text style={styles.label}>Select Date :</Text>
+          <Text style={styles.dateText} onPress={() => setShowDatePicker(true)}>
+            {format(selectedDate, "yyyy-MM-dd")}
+          </Text>
+          {showDatePicker && (
+            <DateTimePicker
+              value={selectedDate}
+              mode="date"
+              display="calnder"
+              onChange={handleDateChange}
+              // style={styles.datePicker}
+            />
+          )}
+        </View>
         <View style={styles.fliterContainer}>
-          <Text style={styles.label}>Select Status:</Text>
-          {user.role ==='Admin' &&
-          <Picker
-            style={styles.pickerelement}
-            selectedValue={selectedStatus}
-            onValueChange={(itemValue) => setSelectedStatus(itemValue)}
-          >
-            <Picker.Item label="All" value="All" />
-            <Picker.Item label="Waitlist" value="Waitlist" />
-            <Picker.Item label="Confirmed" value="Confirmed" />
-            <Picker.Item label="Staff Appointed" value="Staff Appointed" />
-            <Picker.Item label="Payment completed" value="Payment Done" />
-            <Picker.Item label="In Progress" value="In Progress" />
-            <Picker.Item label="Completed" value="Completed" />
-            <Picker.Item label="Cancelled" value="Cancelled" />
-          </Picker>
-          }
-          {user.role ==='Staff' &&      
-          <Picker
-            style={styles.pickerelement}
-            selectedValue={selectedStatus}
-            onValueChange={(itemValue) => setSelectedStatus(itemValue)}
-          >
-            <Picker.Item label="All" value="All" />
-            <Picker.Item label="Start Service" value="Payment Done" />
-            <Picker.Item label="In Progress" value="In Progress" />
-            <Picker.Item label="Completed" value="Completed" />
-          </Picker>
-          }
+          <Text style={styles.label}>Select Status :</Text>
+          {role === "admin" && (
+            <Picker
+              style={styles.pickerElement}
+              selectedValue={selectedStatus}
+              onValueChange={(itemValue) => setSelectedStatus(itemValue)}
+            >
+              <Picker.Item label="All" value="All" />
+              <Picker.Item label="Waitlist" value="Waitlist" />
+              <Picker.Item label="Confirmed" value="Confirmed" />
+              <Picker.Item label="Payment completed" value="Payment Done" />
+              <Picker.Item label="In Progress" value="In Progress" />
+              <Picker.Item label="Completed" value="Completed" />
+              <Picker.Item label="Cancelled" value="Cancelled" />
+            </Picker>
+          )}
+          {role === "staff" && (
+            <Picker
+              style={styles.pickerElement}
+              selectedValue={selectedStatus}
+              onValueChange={(itemValue) => setSelectedStatus(itemValue)}
+            >
+              <Picker.Item label="All" value="All" />
+              <Picker.Item label="Start Service" value="Payment Done" />
+              <Picker.Item label="In Progress" value="In Progress" />
+              <Picker.Item label="Completed" value="Completed" />
+            </Picker>
+          )}
         </View>
       </View>
 
@@ -208,6 +243,7 @@ const ViewAppointments = ({ route }) => {
                 <Text style={styles.cardLabel}>
                   Status: <Text style={styles.cardValue}>{item.status}</Text>
                 </Text>
+                <>
                   <View style={styles.button}>
                     <Button
                       title={getButtonTitle(item.status)}
@@ -215,6 +251,7 @@ const ViewAppointments = ({ route }) => {
                       onPress={() => clickhandler(item)}
                     />
                   </View>
+                </>
               </View>
             </View>
           )}

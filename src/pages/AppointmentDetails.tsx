@@ -5,15 +5,17 @@ import { useState, useEffect } from "react";
 import { styles } from "../styles/StyleAppointment";
 
 import {
-  updateAppointment,
+  updateAdminAppointment,
+  updateStaffAppointment,
   fetchStaffListByService,
-  fetchStaffByAppointment,
 } from "../services/api";
 
 const AppointmentDetails = ({ route }) => {
   const [appointment, setAppointment] = useState(route.params.appointment);
-  const [selectedStaff, setSelectedStaff] = useState(null);
-  const user = route.params.user
+  const [selectedStaff, setSelectedStaff] = useState(
+    route.params.appointment.staffname || null
+  );
+  const role = route.params.role;
   const [staffList, setStaffList] = useState([]);
 
   useEffect(() => {
@@ -21,6 +23,7 @@ const AppointmentDetails = ({ route }) => {
     const loadStaffList = async () => {
       try {
         // const data = await fetchStaffListByService(appointment.service_id);
+        // setStaffList(data);
         const dummystaffList = [
           { id: 1, name: "John Doe" },
           { id: 2, name: "Jane Smith" },
@@ -28,56 +31,61 @@ const AppointmentDetails = ({ route }) => {
           { id: 4, name: "Mark Lee" },
         ];
         setStaffList(dummystaffList);
-        // setStaffList(data);
       } catch (error) {
         alert("Error fetching StaffList!");
       }
     };
     loadStaffList();
-    // }
-    // else if(appointment.status!== 'Waitlist'){
-    //   const loadStaff = async () => {
-    //     try{
-    //       const data = await fetchStaffByAppointment(appointment.staff_id)
-    //       setStaffList([data]);
-    //     }catch(error){
-    //       alert('Error fetching Staff!');
-    //     }
-    //   }
-    //   loadStaff();
-    // }
   }, []);
 
-  const changeAppointment = async (updatedappointment) => {
+  const changeAppointment = async (updatedFields) => {
     try {
-      // const response = await UpdateAppointment(updatedappointment);
-      // if(response.status === 200){
-      //   setAppointment(updatedappointment);
-      // }
-      setAppointment(updatedappointment);
+      if (role === "admin") {
+        const response = await updateAdminAppointment(
+          appointment.id,
+          updatedFields
+        );
+        setAppointment(response);
+      } else {
+        const response = await updateStaffAppointment(
+          appointment.id,
+          updatedFileds
+        );
+        setAppointment(response);
+      }
+      // setAppointment(updatedappointment);
     } catch (error) {
       alert("Error updating appointment");
     }
   };
 
-  const handleStaffSelection = (staff) => {
-    setSelectedStaff(staff);
+  const handleStaffSelection = (staffId) => {
+    setSelectedStaff(staffId);
     // Alert.alert('Staff Selected', `You have selected ${staffList.find(staff => staff.id === staffId).name}`);
 
     changeAppointment({
-      ...appointment,
-      staffName: staff,
-      status: "Staff Appointed",
+      staff_id: staffId,
     });
   };
 
   const handlePayment = () => {
     // payment calls
     changeAppointment({
-      ...appointment,
       status: "Payment Done",
+      PaymentStatus: "Paid",
     });
   };
+
+  const handlecomplete = async() =>{
+    try{
+      if(role ==='Staff'){
+        const response = await completeAppointmnet(appointment.id);
+        setAppointment(response)
+      }catch(error){
+        Alert.alert('Couldn\'t complete Appiontment, try Again');
+      }
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -106,43 +114,29 @@ const AppointmentDetails = ({ route }) => {
             {appointment.staffName || "Staff Not Assigned"}
           </Text>
         </Text>
-        {/* <Text style={styles.label}>
-          Payment :{" "}
-          <Text style={styles.value}>{appointment.payment || "N/A"}</Text>
-        </Text>
-        <Text style={styles.label}>
-          Payment Status :{" "}
-          <Text style={styles.value}>
-            {appointment.paymentstauts || "UnPaid"}
-          </Text>
-        </Text> */}
-
-        {appointment.status === "Confirmed"  && user.role === "Admin" && (
-          <View style={styles.pickerContainer}>
-            <Text style={styles.label}>Select Staff:</Text>
-            <Picker
-              selectedValue={selectedStaff}
-              onValueChange={(itemValue) => handleStaffSelection(itemValue)}
-            >
-              {staffList.map((staff) => (
-                <Picker.Item
-                  key={staff.id}
-                  label={staff.name}
-                  value={staff.name}
-                />
-              ))}
-            </Picker>
-          </View>
+        {role === "admin" && (
+          <>
+            <Text style={styles.label}>
+              Amount :{" "}
+              <Text style={styles.value}>{appointment.amount || "$ 20"}</Text>
+            </Text>
+            <Text style={styles.label}>
+              Payment Status :{" "}
+              <Text style={styles.value}>
+                {appointment.paymentStatus || "UnPaid"}
+              </Text>
+            </Text>
+          </>
         )}
 
-        {appointment.status === "Waitlist" && user.role === "Admin" && (
+        {appointment.status === "Waitlist" && role === "admin" && (
           <View style={styles.buttonsContainer}>
             <View style={styles.button}>
               <Button
                 title="Cancel"
                 color="red"
                 onPress={() => {
-                  changeAppointment({ ...appointment, status: "Cancelled" });
+                  changeAppointment({ status: "Cancelled" });
                 }}
               />
             </View>
@@ -151,37 +145,59 @@ const AppointmentDetails = ({ route }) => {
                 title="Confirm"
                 color="green"
                 onPress={() => {
-                  changeAppointment({ ...appointment, status: "Confirmed" });
+                  changeAppointment({ status: "Confirmed" });
                 }}
               />
             </View>
           </View>
         )}
 
-        {appointment.status === "Staff Appointed" && user.role === "Admin" && (
-          <View style={styles.button}>
-            <Button title="Payment" onPress={handlePayment} />
-          </View>
+        {(appointment.status === "Confirmed" ||
+          appointment.status === "Payment Done") &&
+          role === "admin" && (
+            <>
+              <View style={styles.pickerContainer}>
+                <Text style={styles.label}>Change Staff:</Text>
+                <Picker
+                  selectedValue={selectedStaff}
+                  onValueChange={(itemValue) => handleStaffSelection(itemValue)}
+                >
+                  {staffList.map((staff) => (
+                    <Picker.Item
+                      key={staff.id}
+                      label={staff.name}
+                      value={staff.id}
+                    />
+                  ))}
+                </Picker>
+              </View>
+            </>
+          )}
+
+        {appointment.status === "Confirmed" && role === "admin" && (
+          <>
+            <View style={styles.button}>
+              <Button title="Payment" onPress={handlePayment} />
+            </View>
+          </>
         )}
 
-        {appointment.status === "Payment Done" && user.role === "Staff" && (
+        {appointment.status === "Payment Done" && role === "staff" && (
           <View style={styles.button}>
             <Button
               title="Start Service"
               onPress={() => {
-                changeAppointment({ ...appointment, status: "In Progress" });
+                changeAppointment({ status: "In Progress" });
               }}
             />
           </View>
         )}
 
-        {appointment.status === "In Progress" && user.role === "Staff" && (
+        {appointment.status === "In Progress" && role === "staff" && (
           <View style={styles.button}>
             <Button
-              title="Complete" onPress={()=>changeAppointment({
-                ...appointment,
-                status: "Completed",
-              })}
+              title="Complete"
+              onPress={handlecomplete}
             />
           </View>
         )}

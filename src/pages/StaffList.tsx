@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { fetchAdminAppointments } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import { fetchAdminAppointments } from "../services/api";
 
 const getstaffList = () => {
-  const [staffList, setStaffList] = useState([          {
-    id: 1,
-    staffName: 'John Doe',
-    hourlyWage: '20 $',
-    Specialisation: 'Haircut'
-
-  }]);
+  const [staffList, setStaffList] = useState([
+    {
+      id: 1,
+      staffName: "John Doe",
+      hourlyWage: "20 $",
+      Specialisation: "Haircut",
+    },
+  ]);
 
   useEffect(() => {
     const loadStaffList = async () => {
@@ -18,39 +19,39 @@ const getstaffList = () => {
         const dummyStaffList = [
           {
             id: 1,
-            staffName: 'John Doe',
-            hourlyWage: '20 $',
-            Specialisation: 'Haircut'
+            staffName: "John Doe",
+            hourlyWage: "20 $",
+            Specialisation: "Haircut",
           },
           {
             id: 1,
-            staffName: 'John Doe',
-            hourlyWage: '20 $',
-            Specialisation: 'Haircut'
+            staffName: "John Doe",
+            hourlyWage: "20 $",
+            Specialisation: "Haircut",
           },
           {
             id: 1,
-            staffName: 'John Doe',
-            hourlyWage: '20 $',
-            Specialisation: 'Haircut'
+            staffName: "John Doe",
+            hourlyWage: "20 $",
+            Specialisation: "Haircut",
           },
           {
             id: 1,
-            staffName: 'John Doe',
-            hourlyWage: '20 $',
-            Specialisation: 'Haircut'
+            staffName: "John Doe",
+            hourlyWage: "20 $",
+            Specialisation: "Haircut",
           },
           {
             id: 1,
-            staffName: 'John Doe',
-            hourlyWage: '20 $',
-            Specialisation: 'Haircut'
+            staffName: "John Doe",
+            hourlyWage: "20 $",
+            Specialisation: "Haircut",
           },
         ];
-                
+
         setStaffList(dummyStaffList);
       } catch (error) {
-        alert('Error fetching Staff!');
+        alert("Error fetching Staff!");
       }
     };
     loadStaffList();
@@ -76,7 +77,7 @@ const getstaffList = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
   card: { borderWidth: 1, borderRadius: 5, padding: 10, marginBottom: 10 },
 });
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Button,TextInput, Alert, ScrollView } from "react-native";
+import { View, Button, TextInput, Alert, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { createService } from "../services/api";
 import { styles } from "../styles/FormStyles";
@@ -10,7 +10,7 @@ const AddService = () => {
   const [description, setDescripton] = useState("");
   const [duration, setDuration] = useState("");
   const [price, setPrice] = useState("");
-  const [CommissionRate, setComssionRate] = useState("");
+  // const [CommissionRate, setComssionRate] = useState("");
   const [limitPerDay, setLimitPerDay] = useState("");
 
   const handleSubmit = async () => {
@@ -21,15 +21,14 @@ const AddService = () => {
         description: description,
         duration: duration,
         price: price,
-        CommissionRate: CommissionRate,
+        // CommissionRate: CommissionRate,
         limitPerDay: limitPerDay,
       };
 
       const response = await createService(Data);
 
-      if (response.status == 400) {
+      if (response.status === 200) {
         Alert.alert("service created");
-
         navigation.navigate("AdminDashboard");
       }
     } catch (error) {
@@ -64,12 +63,12 @@ const AddService = () => {
           onChangeText={setPrice}
           placeholder="Price"
         />
-        <TextInput
+        {/* <TextInput
           style={styles.card}
           value={CommissionRate}
           onChangeText={setComssionRate}
           placeholder="Comssion Rate"
-        />
+        /> */}
         <TextInput
           style={styles.card}
           value={limitPerDay}

@@ -6,6 +6,7 @@ const styles ={
         padding: 20, 
         justifyContent: 'center',
         alignItems : "center",
+        fontFamily :'Open Saus'
       },
     card: {
         borderWidth: 1.5,
@@ -22,6 +23,10 @@ const styles ={
         paddingTop: 10,
         justifyContent: "center",
         alignItems: "left",
+    },
+    label:{
+        fontSize:16,
+        fontWeight:'blur',
     }
 }
 
