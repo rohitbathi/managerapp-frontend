@@ -8,6 +8,7 @@ import {
   updateAdminAppointment,
   updateStaffAppointment,
   fetchStaffListByService,
+  completeAppointment,
 } from "../services/api";
 
 const AppointmentDetails = ({ route }) => {
@@ -22,15 +23,15 @@ const AppointmentDetails = ({ route }) => {
     // if(appointment.status === 'Confirmed'){
     const loadStaffList = async () => {
       try {
-        // const data = await fetchStaffListByService(appointment.service_id);
-        // setStaffList(data);
-        const dummystaffList = [
-          { id: 1, name: "John Doe" },
-          { id: 2, name: "Jane Smith" },
-          { id: 3, name: "Alice Johnson" },
-          { id: 4, name: "Mark Lee" },
-        ];
-        setStaffList(dummystaffList);
+        const data = await fetchStaffListByService(appointment.service_id);
+        setStaffList(data);
+        // const dummystaffList = [
+        //   { id: 1, name: "John Doe" },
+        //   { id: 2, name: "Jane Smith" },
+        //   { id: 3, name: "Alice Johnson" },
+        //   { id: 4, name: "Mark Lee" },
+        // ];
+        // setStaffList(dummystaffList);
       } catch (error) {
         alert("Error fetching StaffList!");
       }
@@ -76,16 +77,16 @@ const AppointmentDetails = ({ route }) => {
     });
   };
 
-  const handlecomplete = async() =>{
-    try{
-      if(role ==='Staff'){
-        const response = await completeAppointmnet(appointment.id);
-        setAppointment(response)
-      }catch(error){
-        Alert.alert('Couldn\'t complete Appiontment, try Again');
+  const handlecomplete = async () => {
+    try {
+      if (role === "Staff") {
+        const response = await completeAppointment(appointment.id);
+        setAppointment(response);
       }
+    } catch (error) {
+      Alert.alert("Could not complete Appiontment, try Again");
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -195,10 +196,7 @@ const AppointmentDetails = ({ route }) => {
 
         {appointment.status === "In Progress" && role === "staff" && (
           <View style={styles.button}>
-            <Button
-              title="Complete"
-              onPress={handlecomplete}
-            />
+            <Button title="Complete" onPress={handlecomplete} />
           </View>
         )}
       </View>

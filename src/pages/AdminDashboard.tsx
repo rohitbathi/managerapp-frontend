@@ -13,7 +13,7 @@ const AdminDashboard = ({ route }) => {
       if (response.status === 200) {
         navigation.navigate("Login");
       }
-    } catch {
+    } catch(error) {
       Alert.alert("Logout Failed! Try Again.");
     }
   };

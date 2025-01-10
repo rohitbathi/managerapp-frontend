@@ -1,20 +1,22 @@
 import { View, Button, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "../styles/DashboardStyles";
+import { Logout } from "../services/api";
 
 const StaffDashboard = ({ route }) => {
   const navigation = useNavigation();
-  const handleLogout = () => {
+  const role = route.params.role;
+
+  const handleLogout = async () => {
     try {
       const response = await Logout();
       if (response.status === 200) {
         navigation.navigate("Login");
       }
-    } catch {
+    } catch(error) {
       Alert.alert("Logout Failed! Try Again.");
     }
   };
-  const role = route.params.role;
 
   return (
     <View style={styles.container}>
