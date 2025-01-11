@@ -11,13 +11,9 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      // const response = await authenticateUser({ email, password });
-      // console.log(email, password);
-      // navigation.navigate("AdminDashboard");
-      // navigation.navigate('StaffDashboard');
-      // const role = response.role;
-      // console.log(role);
-      const role = 'admin';
+      const response = await authenticateUser({ email, password });
+      console.log(email, password);
+      const role = response.role;
 
       if (role === "admin") {
         navigation.navigate("AdminDashboard", { role });

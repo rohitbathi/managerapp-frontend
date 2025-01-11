@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Button, TextInput, Alert, ScrollView, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { createAdmin, createStaff} from "../services/api";
+import { createAdmin, createStaff } from "../services/api";
 import { styles } from "../styles/FormStyles";
 import { Picker } from "@react-native-picker/picker";
 
@@ -59,7 +59,7 @@ const AddUser = ({ route }) => {
           dob: dob,
           role: role,
           hourlyWage: hourlyWage,
-          ServiceId: ServiceId,
+          service_id: ServiceId,
           password: password,
         };
         setUser(staff);
@@ -72,8 +72,8 @@ const AddUser = ({ route }) => {
         }
       } else {
         const customerorAdmin = {
-          firstName: firstName,
-          lastName: lastName,
+          first_name: firstName,
+          last_name: lastName,
           email: email,
           phone_number: phoneNumber,
           dob: dob,

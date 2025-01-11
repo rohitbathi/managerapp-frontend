@@ -25,12 +25,12 @@ const ViewServices = () => {
     <View style={styles.container}>
       <FlatList
         data={serviceList}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.service_id.toString()}
         renderItem={({ item }) => (
           <View style={styles.cardContainer}>
             <View style={styles.card}>
               <Text style={styles.cardLabel}>
-                Name:<Text style={styles.cardValue}>{item.Name || "N/A"}</Text>
+                Name:<Text style={styles.cardValue}>{item.name || "N/A"}</Text>
               </Text>
 
               <Text style={styles.cardLabel}>

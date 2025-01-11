@@ -13,15 +13,13 @@ const ViewUsers = ({ route }) => {
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        if(userRole==='Customers'){
+        if (userRole === "customer") {
           const data = await fetchCustomers();
           setUserList(data);
-        }
-        else{
+        } else {
           const data = await fetchStaff();
           setUserList(data);
         }
-       
       } catch (error) {
         alert("Error fetching appointments!");
       }
@@ -29,23 +27,23 @@ const ViewUsers = ({ route }) => {
     loadUsers();
   }, []);
 
-  const filteredUsers = userList.filter((item) => item.role === userRole);
-
   return (
     <View style={styles.container}>
       <FlatList
-        data={filteredUsers}
+        data={userList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.cardContainer}>
             <View style={styles.card}>
               <Text style={styles.cardLabel}>
-                Name:<Text style={styles.cardValue}>{item.Name || "N/A"}</Text>
+                Name:<Text style={styles.cardValue}>{item.name || "N/A"}</Text>
               </Text>
 
               <Text style={styles.cardLabel}>
                 Phone:
-                <Text style={styles.cardValue}>{item.Phone || "N/A"}</Text>
+                <Text style={styles.cardValue}>
+                  {item.phone_number || "N/A"}
+                </Text>
               </Text>
 
               <Text style={styles.cardLabel}>

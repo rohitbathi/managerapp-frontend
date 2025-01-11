@@ -24,76 +24,11 @@ const ViewAppointments = ({ route }) => {
     const loadAppointments = async (date) => {
       try {
         if (role === "admin") {
-          // const adminAppointments = await fetchAdminAppointments(date);
-          // setAppointments(adminAppointments,selectedDate);
-          console.log(date);
-          const dummyAppointments = [
-            {
-              id: 1,
-              customerName: "John Doe",
-              serviceName: "Haircut",
-              slot: "10:00 AM - 10:30 AM",
-              status: "Confirmed",
-              date: "2025-01-10",
-            },
-            {
-              id: 2,
-              customerName: "Jane Smith",
-              serviceName: "Massage",
-              slot: "11:00 AM - 12:00 PM",
-              status: "Waitlist",
-              date: "2025-01-11",
-            },
-            {
-              id: 3,
-              customerName: "Robert Brown",
-              serviceName: "Manicure",
-              slot: "12:30 PM - 1:00 PM",
-              status: "Payment Done",
-              staffName: "Dane Smith",
-              date: "2025-01-10",
-            },
-            {
-              id: 5,
-              customerName: "Chris Black",
-              serviceName: "Pedicure",
-              slot: "3:30 PM - 4:00 PM",
-              status: "Completed",
-              staffName: "Lilly Adams",
-              date: "2025-01-11",
-            },
-          ];
-          setAppointments(dummyAppointments);
+          const adminAppointments = await fetchAdminAppointments(date);
+          setAppointments(adminAppointments.appointments);
         } else {
           const staffAppointments = await fetchStaffAppointments(date);
-          setAppointments(staffAppointments);
-          // const dummyStaffAppointments = [
-          //   {
-          //     id: 1,
-          //     customerName: "John Doe",
-          //     serviceName: "Haircut",
-          //     slot: "10:00 AM - 10:30 AM",
-          //     staffName: "John Cena",
-          //     status: "Payment Done",
-          //   },
-          //   {
-          //     id: 2,
-          //     customerName: "Jane Smith",
-          //     serviceName: "Haircut",
-          //     slot: "11:00 AM - 12:00 PM",
-          //     staffName: "John Cena",
-          //     status: "In Progress",
-          //   },
-          //   {
-          //     id: 3,
-          //     customerName: "Robert Brown",
-          //     serviceName: "Haircut",
-          //     slot: "12:30 PM - 1:00 PM",
-          //     staffName: "John Cena",
-          //     status: "Completed",
-          //   },
-          // ];
-          // setAppointments(dummyStaffAppointments);
+          setAppointments(staffAppointments.appointments);
         }
       } catch (error) {
         alert("Error fetching appointments!");
@@ -111,8 +46,7 @@ const ViewAppointments = ({ route }) => {
     }
   };
 
-  const handleDateChange = async (event, date) => {
-    console.log(date);
+  const handleDateChange = async (date) => {
     setShowDatePicker(false);
     if (date) {
       setSelectedDate(date);
@@ -123,18 +57,18 @@ const ViewAppointments = ({ route }) => {
   const getButtonTitle = (status) => {
     if (role === "admin") {
       switch (status) {
-        case "Waitlist":
+        case "waitlist":
           return "Confirm/Cancel";
-        case "Confirmed":
+        case "confirmed":
           return "Payment";
         default:
           return "View Details";
       }
     } else {
       switch (status) {
-        case "Payment Done":
+        case "paymentDone":
           return "Start Service";
-        case "In Progress":
+        case "inProgress":
           return "Complete";
         default:
           return "View Details";
@@ -145,18 +79,18 @@ const ViewAppointments = ({ route }) => {
   const getButtonColor = (status) => {
     if (role === "admin") {
       switch (status) {
-        case "Waitlist":
+        case "waitlist":
           return "red";
-        case "Confirmed":
+        case "confirmed":
           return "green";
         default:
           return "black";
       }
     } else {
       switch (status) {
-        case "Payment Done":
+        case "paymentDone":
           return "blue";
-        case "In Progress":
+        case "inProgress":
           return "green";
         default:
           return "black";
@@ -168,6 +102,7 @@ const ViewAppointments = ({ route }) => {
     selectedStatus === "All"
       ? appointments
       : appointments.filter((item) => item.status === selectedStatus);
+
 
   const { width } = Dimensions.get("window");
 
@@ -199,12 +134,12 @@ const ViewAppointments = ({ route }) => {
               onValueChange={(itemValue) => setSelectedStatus(itemValue)}
             >
               <Picker.Item label="All" value="All" />
-              <Picker.Item label="Waitlist" value="Waitlist" />
-              <Picker.Item label="Confirmed" value="Confirmed" />
-              <Picker.Item label="Payment completed" value="Payment Done" />
-              <Picker.Item label="In Progress" value="In Progress" />
-              <Picker.Item label="Completed" value="Completed" />
-              <Picker.Item label="Cancelled" value="Cancelled" />
+              <Picker.Item label="Waitlist" value="waitlist" />
+              <Picker.Item label="Confirmed" value="confirmed" />
+              <Picker.Item label="Payment completed" value="paymentDone" />
+              <Picker.Item label="In Progress" value="inProgress" />
+              <Picker.Item label="Completed" value="completed" />
+              <Picker.Item label="Cancelled" value="cancelled" />
             </Picker>
           )}
           {role === "staff" && (
@@ -214,9 +149,9 @@ const ViewAppointments = ({ route }) => {
               onValueChange={(itemValue) => setSelectedStatus(itemValue)}
             >
               <Picker.Item label="All" value="All" />
-              <Picker.Item label="Start Service" value="Payment Done" />
-              <Picker.Item label="In Progress" value="In Progress" />
-              <Picker.Item label="Completed" value="Completed" />
+              <Picker.Item label="Start Service" value="paymentDone" />
+              <Picker.Item label="In Progress" value="inProgress" />
+              <Picker.Item label="Completed" value="completed" />
             </Picker>
           )}
         </View>
@@ -225,20 +160,23 @@ const ViewAppointments = ({ route }) => {
       <View style={styles.flatcontainer}>
         <FlatList
           data={filteredAppointments}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.appointment_id.toString()}
           renderItem={({ item }) => (
             <View style={styles.cardContainer}>
               <View style={styles.card}>
                 <Text style={styles.cardLabel}>
-                  Customer:{" "}
-                  <Text style={styles.cardValue}>{item.customerName}</Text>
+                  Customer :{" "}
+                  <Text style={styles.cardValue}>{item.customer_name}</Text>
                 </Text>
                 <Text style={styles.cardLabel}>
-                  Service:{" "}
-                  <Text style={styles.cardValue}>{item.serviceName}</Text>
+                  Service :{" "}
+                  <Text style={styles.cardValue}>{item.service_name}</Text>
                 </Text>
                 <Text style={styles.cardLabel}>
-                  Slot: <Text style={styles.cardValue}>{item.slot}</Text>
+                  Date : <Text style={styles.cardValue}>{format(item.date, "yyyy-MM-dd")}</Text>
+                </Text>
+                <Text style={styles.cardLabel}>
+                  Start Time : <Text style={styles.cardValue}>{item.startTime}</Text>
                 </Text>
                 <Text style={styles.cardLabel}>
                   Status: <Text style={styles.cardValue}>{item.status}</Text>
