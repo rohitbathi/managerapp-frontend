@@ -14,20 +14,19 @@ const ViewAppointments = ({ route }) => {
   const navigation = useNavigation();
   const [appointments, setAppointments] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("All");
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().slice(0, 10)
-  );
+  const [selectedDate, setSelectedDate] = useState(new Date()); // Use Date object directly
   const [showDatePicker, setShowDatePicker] = useState(false);
   const role = route.params.role;
 
   useEffect(() => {
     const loadAppointments = async (date) => {
       try {
+        const dateString = format(date, "yyyy-MM-dd"); // Format date for API call
         if (role === "admin") {
-          const adminAppointments = await fetchAdminAppointments(date);
+          const adminAppointments = await fetchAdminAppointments(dateString);
           setAppointments(adminAppointments.appointments);
         } else {
-          const staffAppointments = await fetchStaffAppointments(date);
+          const staffAppointments = await fetchStaffAppointments(dateString);
           setAppointments(staffAppointments.appointments);
         }
       } catch (error) {
@@ -35,25 +34,23 @@ const ViewAppointments = ({ route }) => {
       }
     };
     loadAppointments(selectedDate);
-  }, []);
+  }, [selectedDate]); // Added dependency on selectedDate
 
   const clickhandler = (appointment) => {
     try {
-      // Alert.alert('Button Pressed')
       navigation.navigate("AppointmentDetails", { appointment, role });
     } catch (error) {
       Alert.alert("Error in viewing Appointment Details");
     }
   };
 
-  const handleDateChange = async (date) => {
+  const handleDateChange = async (event, date) => {
     setShowDatePicker(false);
     if (date) {
-      setSelectedDate(date);
-      const newDate = selectedDate.toISOString().slice(0, 10); // Format date for API call
-      await fetchAppointments(newDate); // Fetch appointments for the new date
+      setSelectedDate(date); // Directly set the selected date
     }
   };
+
   const getButtonTitle = (status) => {
     if (role === "admin") {
       switch (status) {
@@ -103,25 +100,22 @@ const ViewAppointments = ({ route }) => {
       ? appointments
       : appointments.filter((item) => item.status === selectedStatus);
 
-
   const { width } = Dimensions.get("window");
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.title}>Apppiontments</Text> */}
       <View style={styles.navbar}>
         <View style={styles.dateContainer}>
           <Text style={styles.label}>Select Date :</Text>
           <Text style={styles.dateText} onPress={() => setShowDatePicker(true)}>
-            {format(selectedDate, "yyyy-MM-dd")}
+            {format(selectedDate, "yyyy-MM-dd")} {/* Format Date for display */}
           </Text>
           {showDatePicker && (
             <DateTimePicker
-              value={selectedDate}
+              value={selectedDate} // Pass Date object
               mode="date"
-              display="calnder"
+              display="calendar"
               onChange={handleDateChange}
-              // style={styles.datePicker}
             />
           )}
         </View>
@@ -173,7 +167,7 @@ const ViewAppointments = ({ route }) => {
                   <Text style={styles.cardValue}>{item.service_name}</Text>
                 </Text>
                 <Text style={styles.cardLabel}>
-                  Date : <Text style={styles.cardValue}>{format(item.date, "yyyy-MM-dd")}</Text>
+                  Date : <Text style={styles.cardValue}>{format(new Date(item.date), "yyyy-MM-dd")}</Text>
                 </Text>
                 <Text style={styles.cardLabel}>
                   Start Time : <Text style={styles.cardValue}>{item.startTime}</Text>
@@ -181,19 +175,16 @@ const ViewAppointments = ({ route }) => {
                 <Text style={styles.cardLabel}>
                   Status: <Text style={styles.cardValue}>{item.status}</Text>
                 </Text>
-                <>
-                  <View style={styles.button}>
-                    <Button
-                      title={getButtonTitle(item.status)}
-                      color={getButtonColor(item.status)}
-                      onPress={() => clickhandler(item)}
-                    />
-                  </View>
-                </>
+                <View style={styles.button}>
+                  <Button
+                    title={getButtonTitle(item.status)}
+                    color={getButtonColor(item.status)}
+                    onPress={() => clickhandler(item)}
+                  />
+                </View>
               </View>
             </View>
           )}
-          // Calculate numColumns based on screen width and card width
           numColumns={Math.floor(width / (styles.cardContainer.width + 10))}
         />
       </View>

@@ -1,7 +1,7 @@
 import { View, Button, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "../styles/DashboardStyles";
-import { Logout } from "../services/api";
+import { logoutUser } from "../services/api";
 
 const AdminDashboard = ({ route }) => {
   const navigation = useNavigation();
@@ -9,9 +9,10 @@ const AdminDashboard = ({ route }) => {
 
   const handleLogout = async () => {
     try {
-      const response = await Logout();
-      if (response.status === 200) {
-        navigation.navigate("Login");
+      const response = await logoutUser();
+      if (response) {
+        Alert.alert(response.message)
+        navigation.goBack();
       }
     } catch(error) {
       Alert.alert("Logout Failed! Try Again.");

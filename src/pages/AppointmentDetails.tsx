@@ -23,7 +23,7 @@ const AppointmentDetails = ({ route }) => {
     // if(appointment.status === 'Confirmed'){
     const loadStaffList = async () => {
       try {
-        const data = await fetchStaffListByService(appointment.service_id);
+        const data = await fetchStaffListByService(appointment.service_id,appointment.date,appointment.startTime);
         setStaffList(data);
       } catch (error) {
         alert("Error fetching StaffList!");
@@ -149,9 +149,9 @@ const AppointmentDetails = ({ route }) => {
                 >
                   {staffList.map((staff) => (
                     <Picker.Item
-                      key={staff.id}
+                      key={staff.staff_id}
                       label={staff.name}
-                      value={staff.id}
+                      value={staff.staff_id}
                     />
                   ))}
                 </Picker>

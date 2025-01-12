@@ -10,26 +10,26 @@ const AddService = () => {
   const [description, setDescripton] = useState("");
   const [duration, setDuration] = useState("");
   const [price, setPrice] = useState("");
-  // const [CommissionRate, setComssionRate] = useState("");
+  const [commissionRate, setComssionRate] = useState("");
   const [limitPerDay, setLimitPerDay] = useState("");
 
   const handleSubmit = async () => {
     // Handle form submission logic here
     try {
-      const Data = {
+      const service = {
         name: name,
         description: description,
         duration: duration,
         price: price,
-        // CommissionRate: CommissionRate,
+        commissionRate: commissionRate,
         limitPerDay: limitPerDay,
       };
 
-      const response = await createService(Data);
+      const response = await createService({ service });
 
-      if (response.status === 200) {
+      if (response.serviceId) {
         Alert.alert("service created");
-        navigation.navigate("AdminDashboard");
+        navigation.goBack();
       }
     } catch (error) {
       alert("Error Creating Service. please try again.");
@@ -63,12 +63,12 @@ const AddService = () => {
           onChangeText={setPrice}
           placeholder="Price"
         />
-        {/* <TextInput
+        <TextInput
           style={styles.card}
-          value={CommissionRate}
+          value={commissionRate}
           onChangeText={setComssionRate}
           placeholder="Comssion Rate"
-        /> */}
+        />
         <TextInput
           style={styles.card}
           value={limitPerDay}

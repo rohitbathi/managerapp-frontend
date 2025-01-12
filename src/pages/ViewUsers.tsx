@@ -51,25 +51,25 @@ const ViewUsers = ({ route }) => {
                 <Text style={styles.cardValue}>{item.email || "N/A"}</Text>
               </Text>
 
-              {userRole === "Customer" && (
+              {userRole === "customer" && (
                 <Text style={styles.cardLabel}>
                   Status:<Text style={styles.cardValue}>{item.status}</Text>
                 </Text>
               )}
 
-              {userRole === "Staff" && (
+              {userRole === "staff" && (
                 <>
                   <Text style={styles.cardLabel}>
                     Service:
                     <Text style={styles.cardValue}>
-                      {item.servicename || "N/A"}
+                      {item.service_name || "N/A"}
                     </Text>
                   </Text>
 
                   <Text style={styles.cardLabel}>
                     Availability:
                     <Text style={styles.cardValue}>
-                      {item.availability || "Not Available"}
+                      {item.available===1?"Available":"Not Available"}
                     </Text>
                   </Text>
 

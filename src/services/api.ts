@@ -4,85 +4,127 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Set the base URL for the API
 const API_URL = "http://192.168.29.11:5000/api";
 
-// Create an Axios instance with default configurations
+// Create an Axios instance
 const apiClient = axios.create({
   baseURL: API_URL,
   withCredentials: true, // Allow credentials (cookies) to be sent
   headers: { "Content-Type": "application/json" },
 });
 
-// Utility function to get the token from AsyncStorage
-const getAuthToken = async () => {
+// Utility function to save cookies to AsyncStorage (only after login)
+const saveCookiesToStorage = async (setCookieHeader) => {
   try {
-    const token = await AsyncStorage.getItem("authToken"); // Fetch the token from AsyncStorage
-    return token;
+    if (setCookieHeader) {
+      const cookiesArray = Array.isArray(setCookieHeader)
+        ? setCookieHeader
+        : [setCookieHeader]; // Normalize to array if it's a single cookie
+      await AsyncStorage.setItem("cookies", JSON.stringify(cookiesArray)); // Save cookies as an array
+      console.log("Cookies saved to AsyncStorage:", cookiesArray);
+    }
   } catch (error) {
-    console.error("Error retrieving token from AsyncStorage", error);
-    return null;
+    console.error("Failed to save cookies to AsyncStorage:", error);
   }
 };
 
-// Add the token to the headers before sending the request
+// Utility function to load cookies from AsyncStorage
+const loadCookiesFromStorage = async () => {
+  try {
+    const cookies = await AsyncStorage.getItem("cookies");
+    const parsedCookies = cookies ? JSON.parse(cookies) : []; // Parse the stored cookies or return an empty array
+    console.log("Cookies loaded from AsyncStorage:", parsedCookies);
+    return parsedCookies;
+  } catch (error) {
+    console.error("Failed to load cookies from AsyncStorage:", error);
+    return [];
+  }
+};
+
+// Flag to track if the response is from login
+let isLoginRequest = false;
+
+// Add cookies to request headers
 apiClient.interceptors.request.use(
   async (config) => {
-    const token = await getAuthToken(); // Retrieve the stored token
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`; // Add token to Authorization header
+    const cookiesArray = await loadCookiesFromStorage();
+    if (cookiesArray.length > 0) {
+      config.headers["Cookie"] = cookiesArray.join("; "); // Attach cookies as a single string
     }
+
+    // Set flag to true when making login request
+    if (config.url.includes("/auth/login")) {
+      isLoginRequest = true;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Utility function for API calls
+// Save cookies from the response headers after login
+apiClient.interceptors.response.use(
+  async (response) => {
+    // Only save cookies if the response is from the login request
+    if (isLoginRequest && response.headers["set-cookie"]) {
+      const setCookieHeader = response.headers["set-cookie"];
+      await saveCookiesToStorage(setCookieHeader); // Save cookies to AsyncStorage
+      isLoginRequest = false; // Reset the flag after saving cookies
+    }
+    return response;
+  },
+  (error) => {
+    // console.error("Error in API response:", error);
+    return Promise.reject(error);
+  }
+);
+
+// Function to make API calls
 const apiCall = async (method, endpoint, data = null) => {
   try {
     const response = await apiClient({ method, url: endpoint, data });
-    console.log("API request successful:", response);
+    console.log("API request successful:", response.data);
     return response.data;
   } catch (error) {
-    console.error("API request failed:", error);
+    // console.error("API request failed:", error.response.data);
     throw error.response
       ? error.response.data
       : new Error("API error occurred");
   }
 };
 
-// Example API functions
+// Authentication APIs
 export const authenticateUser = async (credentials) => {
   try {
     const response = await apiCall("post", "/auth/login", credentials);
-    console.log(response)
-    const token = response.pos_token; // Assume token is returned in response
-    console.log(token)
-    await AsyncStorage.setItem("authToken", token); // Store token in AsyncStorage
+    // console.log("User authenticated successfully:", response);
+
+    // Cookies will be saved automatically by the response interceptor
     return response;
   } catch (error) {
-    console.error("Authentication failed:", error);
+    // console.error("Authentication failed:", error);
     throw error;
   }
 };
 
-export const logout = async () => {
+// Logout function: Clear cookies from AsyncStorage
+export const logoutUser = async () => {
   try {
-    // Remove token from AsyncStorage upon logout
-    await AsyncStorage.removeItem("authToken");
-    return apiCall("post", "/auth/logout");
+    const response = await apiCall("get", "/auth/logout");
+    console.log("User logged out successfully:", response);
+    await AsyncStorage.removeItem("cookies"); 
+    return response;
   } catch (error) {
-    console.error("Error during logout:", error);
+    console.error("Logout failed:", error);
     throw error;
   }
 };
 
+// Admin APIs
 export const fetchAdminAppointments = (date) =>
   apiCall("get", `/admin/view-appointments?date=${date}`);
 
-export const fetchStaffAppointments = (date) =>
-  apiCall("get", "/staff/view-appointments", date);
+export const createStaff = (user) => apiCall("post", "/admin/add-staff", user);
 
-export const createStaff = (user) => apiCall("post", "/admin/set-staff", user);
-
-export const createAdmin = (user) => apiCall("post", "/admin/set-admin", user);
+export const createAdmin = (user) => apiCall("post", "/admin/add-user", user);
 
 export const createService = (service) =>
   apiCall("post", "/admin/add-service", service);
@@ -93,14 +135,25 @@ export const fetchStaff = () => apiCall("get", "/admin/get-staff");
 
 export const fetchServices = () => apiCall("get", "/admin/get-services");
 
-export const fetchStaffListByService = (service_id) =>
-  apiCall("get", `/admin/get-staff?service_id=${service_id}`);
+export const fetchStaffListByService = (service_id, date, startTime) =>
+  apiCall(
+    "get",
+    `/admin/get-available-staff?service_id=${service_id}&date=${date}&startTime=${startTime}`
+  );
 
 export const updateAdminAppointment = (appointment_id, updatedFields) =>
-  apiCall("put", `/admin/update-appointment/${appointment_id}`, updatedFields);
+  apiCall(
+    "post",
+    `/admin/update-appointment?appointment_id=${appointment_id}`,
+    updatedFields
+  );
+
+// Staff APIs
+export const fetchStaffAppointments = (date) =>
+  apiCall("get", `/staff/view-appointments?date=${date}`);
 
 export const updateStaffAppointment = (appointment_id, updatedFields) =>
-  apiCall("put", `/staff/update-appointment/${appointment_id}`, updatedFields);
+  apiCall("post", `/staff/update-appointment/${appointment_id}`, updatedFields);
 
 export const completeAppointment = (appointment_id) =>
   apiCall("post", `/staff/complete-appointment/${appointment_id}`);

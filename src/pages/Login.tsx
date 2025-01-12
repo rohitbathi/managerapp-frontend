@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Button, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { authenticateUser } from "../services/api";
 import { styles } from "../styles/LoginStyles";
@@ -22,13 +22,10 @@ const Login = () => {
       } else {
         alert("Invalid role!");
       }
-      // if(password === ""){
-      //   Alert.alert("No Password");
-      // }
       setEmail("");
       setPassword("");
     } catch (error) {
-      alert("Login failed. Please check your credentials.");
+      Alert.alert(error.message);
     }
   };
 

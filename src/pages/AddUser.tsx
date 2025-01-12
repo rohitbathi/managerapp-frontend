@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { createAdmin, createStaff } from "../services/api";
 import { styles } from "../styles/FormStyles";
 import { Picker } from "@react-native-picker/picker";
+import { fetchServices } from "../services/api";
 
 const AddUser = ({ route }) => {
   const navigation = useNavigation();
@@ -23,23 +24,8 @@ const AddUser = ({ route }) => {
   useEffect(() => {
     const loadServices = async () => {
       try {
-        // const data = await fetchServices();
-        // setServiceList(data);
-        const dummyServices = [
-          {
-            id: 1,
-            name: "Haircut",
-          },
-          {
-            id: 2,
-            name: "Maniecure",
-          },
-          {
-            id: 3,
-            name: "Massage",
-          },
-        ];
-        setServiceList(dummyServices);
+        const data = await fetchServices();
+        setServiceList(data);
       } catch (error) {
         alert("Error fetching Services!");
       }
@@ -50,7 +36,7 @@ const AddUser = ({ route }) => {
   const handleSubmit = async () => {
     // Handle form submission logic here
     try {
-      if ((role = "staff")) {
+      if (role === "staff") {
         const staff = {
           first_name: firstName,
           last_name: lastName,
@@ -59,19 +45,19 @@ const AddUser = ({ route }) => {
           dob: dob,
           role: role,
           hourlyWage: hourlyWage,
-          service_id: ServiceId,
+          service_id: serviceId,
           password: password,
         };
         setUser(staff);
-        const response = await createStaff(user);
+        const response = await createStaff({ user });
 
-        if (response.status === 200) {
-          Alert.alert("User created");
+        if (response.staff_id) {
+          Alert.alert("Staff created");
 
-          navigation.navigate("AdminDashboard");
+          navigation.goBack();
         }
       } else {
-        const customerorAdmin = {
+        const admin = {
           first_name: firstName,
           last_name: lastName,
           email: email,
@@ -80,17 +66,19 @@ const AddUser = ({ route }) => {
           role: role,
           password: password,
         };
-        setUser(customerorAdmin);
-        const response = await createAdmin(user);
+        setUser(admin);
+        const response = await createAdmin({ user });
 
-        if (response.status === 200) {
+        console.log(response);
+
+        if (response.user_id) {
           Alert.alert("User created");
 
-          navigation.navigate("AdminDashboard");
+          navigation.goBack();
         }
       }
     } catch (error) {
-      alert("Error in User creation. please try again.");
+      alert("Error in User creation. please try again.", error);
     }
   };
 
@@ -136,16 +124,16 @@ const AddUser = ({ route }) => {
               placeholder="Hourly Wage"
             />
             <View style={styles.card}>
-              <Text style={styles.label}>Select Staff:</Text>
+              <Text style={styles.label}>Select Service:</Text>
               <Picker
                 selectedValue={serviceId}
                 onValueChange={(itemValue) => setServiceId(itemValue)}
               >
                 {serviceList.map((service) => (
                   <Picker.Item
-                    key={service.id}
+                    key={service.service_id}
                     label={service.name}
-                    value={service.id}
+                    value={service.service_id}
                   />
                 ))}
               </Picker>
