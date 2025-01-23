@@ -11,16 +11,16 @@ const AdminDashboard = ({ route }) => {
     try {
       const response = await logoutUser();
       if (response) {
-        Alert.alert(response.message)
+        Alert.alert(response.message);
         navigation.goBack();
       }
-    } catch(error) {
+    } catch (error) {
       Alert.alert("Logout Failed! Try Again.");
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.buttonsContainer}>
       <View style={styles.button}>
         <Button
           title="view appointments"
@@ -40,8 +40,8 @@ const AdminDashboard = ({ route }) => {
           onPress={() => navigation.navigate("AddUser", { userRole: "staff" })}
         />
       </View>
-
-      {/* <View style={styles.button}>
+      {/* 
+      <View style={styles.button}>
         
         <Button
           title="Add Customer"
@@ -55,6 +55,13 @@ const AdminDashboard = ({ route }) => {
         <Button
           title="Add Service"
           onPress={() => navigation.navigate("AddService")}
+        />
+      </View>
+
+      <View style = {styles.button}>
+        <Button
+          title="Add Shift Timings"
+          onPress={() => navigation.navigate("AddShiftTimings")}
         />
       </View>
 

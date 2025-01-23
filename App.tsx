@@ -10,6 +10,7 @@ import AppointmentDetails from "./src/pages/AppointmentDetails";
 import ViewAppointments from "./src/pages/ViewAppointments";
 import ViewUsers from "./src/pages/ViewUsers";
 import ViewServices from "./src/pages/ViewServices";
+import AddShiftTimings from "./src/pages/AddShiftTimings";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,7 @@ const App = () => {
             title: "View " + route.params.userRole || "Add User",
           })}
         />
+        <Stack.Screen name = "AddShiftTimings" component={AddShiftTimings}/>
         <Stack.Screen name="ViewServices" component={ViewServices} />
       </Stack.Navigator>
     </NavigationContainer>
