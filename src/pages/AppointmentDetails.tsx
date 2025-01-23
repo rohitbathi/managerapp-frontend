@@ -14,7 +14,7 @@ import {
 const AppointmentDetails = ({ route }) => {
   const [appointment, setAppointment] = useState(route.params.appointment);
   const [selectedStaff, setSelectedStaff] = useState(
-    route.params.appointment.staffname || null
+    route.params.appointment.staff_id || null
   );
   const role = route.params.role;
   const [staffList, setStaffList] = useState([]);
@@ -23,6 +23,7 @@ const AppointmentDetails = ({ route }) => {
     // if(appointment.status === 'Confirmed'){
     const loadStaffList = async () => {
       try {
+        console.log("detail page : ", appointment)
         const data = await fetchStaffListByService(appointment.service_id,appointment.date,appointment.startTime);
         setStaffList(data);
       } catch (error) {
@@ -32,39 +33,44 @@ const AppointmentDetails = ({ route }) => {
     loadStaffList();
   }, []);
 
-  const changeAppointment = async (updatedFields) => {
+  const changeAppointment = async (updatedFields, app) => {
     try {
       if (role === "admin") {
         const response = await updateAdminAppointment(
           appointment.appointment_id,
           updatedFields
         );
-        setAppointment(response.appointment);
+        setAppointment((prev) => ({ ...prev, ...updatedFields })); // Create a new object with updated fields
       } else {
         const response = await updateStaffAppointment(
           appointment.appointment_id,
           updatedFields
         );
-        setAppointment(response.appointment);
+        setAppointment((prev) => ({ ...prev, ...updatedFields })); // Create a new object with updated fields
       }
     } catch (error) {
       alert("Error updating appointment");
     }
   };
+  
 
-  const handleStaffSelection = (staffId) => {
-    setSelectedStaff(staffId);
-    changeAppointment({
-      staff_id: staffId,
-    });
+  const handleStaffSelection = (staff) => {
+    setSelectedStaff(staff.staff_id);
+  
+    changeAppointment(
+      {
+        staff_id: staff.staff_id,
+      },
+      { ...appointment, staff_name: staff.name, staff_id: staff.staff_id }
+    );
   };
-
+  
   const handlePayment = () => {
     // payment calls
+
     changeAppointment({
-      status: "paymentDone",
       paymentStatus: "paid",
-    });
+    }, { ...appointment, paymentStatus: "paid" });
   };
 
   const handlecomplete = async () => {
@@ -137,8 +143,7 @@ const AppointmentDetails = ({ route }) => {
           </View>
         )}
 
-        {(appointment.status === "confirmed" ||
-          appointment.status === "paymentDone") &&
+        {(appointment.status === "confirmed") &&
           role === "admin" && (
             <>
               <View style={styles.pickerContainer}>
@@ -151,7 +156,7 @@ const AppointmentDetails = ({ route }) => {
                     <Picker.Item
                       key={staff.staff_id}
                       label={staff.name}
-                      value={staff.staff_id}
+                      value={staff}
                     />
                   ))}
                 </Picker>
@@ -159,7 +164,7 @@ const AppointmentDetails = ({ route }) => {
             </>
           )}
 
-        {appointment.status === "confirmed" && role === "admin" && (
+        {appointment.status === "confirmed"&& appointment.paymentStatus === "pending" && role === "admin" && (
           <>
             <View style={styles.button}>
               <Button title="Payment" onPress={handlePayment} />
@@ -167,7 +172,7 @@ const AppointmentDetails = ({ route }) => {
           </>
         )}
 
-        {appointment.status === "paymentDone" && role === "staff" && (
+        {appointment.status === "confirmed" && appointment.paymentStatus === "paid" && role === "staff" && (
           <View style={styles.button}>
             <Button
               title="Start Service"
