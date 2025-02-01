@@ -1,4 +1,11 @@
-import { View, Button, Alert } from "react-native";
+import {
+  View,
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  Platform,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "../styles/DashboardStyles";
 import { logoutUser } from "../services/api";
@@ -41,33 +48,32 @@ const StaffDashboard = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.navbar}>
-        {pressCount % 2 === 0 && (
-          <View style={styles.navButton}>
-            <Button title="Clock IN" onPress={handleShift} />
-          </View>
-        )}
-
-        {pressCount % 2 === 1 && (
-          <View style={styles.navButton}>
-            <Button title="Clock OUT" onPress={handleShift} />
-          </View> 
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        {pressCount % 2 === 0 ? (
+          <TouchableOpacity style={styles.navButton} onPress={handleShift}>
+            <Text style={styles.navButtonText}>Clock IN</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.navButton} onPress={handleShift}>
+            <Text style={styles.navButtonText}>Clock OUT</Text>
+          </TouchableOpacity>
         )}
       </View>
-      <View style={styles.buttonsContainer}>
-        <View style={styles.button}>
-          <Button
-            title="view appointments"
+      <View style={styles.content}>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => navigation.navigate("Appointments", { role })}
-          />
-        </View>
-
-        <View style={styles.button}>
-          <Button title="Log Out" onPress={handleLogout} />
+          >
+            <Text style={styles.buttonText}>View Appointments</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleLogout}>
+            <Text style={styles.buttonText}>Log Out</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

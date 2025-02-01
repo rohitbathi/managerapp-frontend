@@ -1,4 +1,11 @@
-import { View, Button, Alert } from "react-native";
+import {
+  View,
+  Alert,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "../styles/DashboardStyles";
 import { logoutUser } from "../services/api";
@@ -15,85 +22,84 @@ const AdminDashboard = ({ route }) => {
         navigation.goBack();
       }
     } catch (error) {
-      Alert.alert("Logout Failed! Try Again.");
+      Alert.alert(error.message);
     }
   };
 
   return (
-    <View style={styles.buttonsContainer}>
-      <View style={styles.button}>
-        <Button
-          title="view appointments"
-          onPress={() => navigation.navigate("Appointments", { role })}
-        />
-      </View>
-      <View style={styles.button}>
-        <Button
-          title="Add Admin"
-          onPress={() => navigation.navigate("AddUser", { userRole: "admin" })}
-        />
-      </View>
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("Appointments", { role })}
+          >
+            <Text style={styles.buttonText}>View Appointments</Text>
+          </TouchableOpacity>
 
-      <View style={styles.button}>
-        <Button
-          title="Add Staff"
-          onPress={() => navigation.navigate("AddUser", { userRole: "staff" })}
-        />
-      </View>
-      {/* 
-      <View style={styles.button}>
-        
-        <Button
-          title="Add Customer"
-          onPress={() =>
-            navigation.navigate("AddUser", { userRole: "customer" })
-          }
-        />
-      </View> */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              navigation.navigate("AddUser", { userRole: "admin" })
+            }
+          >
+            <Text style={styles.buttonText}>Add Admin</Text>
+          </TouchableOpacity>
 
-      <View style={styles.button}>
-        <Button
-          title="Add Service"
-          onPress={() => navigation.navigate("AddService")}
-        />
-      </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              navigation.navigate("AddUser", { userRole: "staff" })
+            }
+          >
+            <Text style={styles.buttonText}>Add Staff</Text>
+          </TouchableOpacity>
 
-      <View style = {styles.button}>
-        <Button
-          title="Add Shift Timings"
-          onPress={() => navigation.navigate("AddShiftTimings")}
-        />
-      </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("AddService")}
+          >
+            <Text style={styles.buttonText}>Add Service</Text>
+          </TouchableOpacity>
 
-      <View style={styles.button}>
-        <Button
-          title="View Staff"
-          onPress={() =>
-            navigation.navigate("ViewUsers", { userRole: "staff" })
-          }
-        />
-      </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("AddShiftTimings")}
+          >
+            <Text style={styles.buttonText}>Add Shift Timings</Text>
+          </TouchableOpacity>
 
-      <View style={styles.button}>
-        <Button
-          title="View Customers"
-          onPress={() =>
-            navigation.navigate("ViewUsers", { userRole: "customer" })
-          }
-        />
-      </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              navigation.navigate("ViewUsers", { userRole: "staff" })
+            }
+          >
+            <Text style={styles.buttonText}>View Staff</Text>
+          </TouchableOpacity>
 
-      <View style={styles.button}>
-        <Button
-          title="View Services"
-          onPress={() => navigation.navigate("ViewServices")}
-        />
-      </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() =>
+              navigation.navigate("ViewUsers", { userRole: "customer" })
+            }
+          >
+            <Text style={styles.buttonText}>View Customers</Text>
+          </TouchableOpacity>
 
-      <View style={styles.button}>
-        <Button title="Log Out" onPress={handleLogout} />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("ViewServices")}
+          >
+            <Text style={styles.buttonText}>View Services</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button} onPress={handleLogout}>
+            <Text style={styles.buttonText}>Log Out</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

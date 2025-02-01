@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { authenticateUser } from "../services/api";
 import { styles } from "../styles/LoginStyles";
@@ -30,34 +38,40 @@ const Login = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logincontainer}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <View style={styles.loginContainer}>
         <Text style={styles.title}>Login</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        {/* <Button title="Login" onPress={handleLogin} /> */}
-        <TouchableOpacity
-          style={styles.button}
-          activeOpacity={0.8} // Adjusts the opacity when pressed
-          onPress={handleLogin}
-        >
-          <View style={styles.buttonContainer}>
-            <Text style={styles.buttonText}>Log in</Text>
-          </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email"
+            placeholderTextColor="#bdc3c7" // Light gray placeholder
+            onChangeText={setEmail}
+            value={email}
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your password"
+            placeholderTextColor="#bdc3c7" // Light gray placeholder
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Log in</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

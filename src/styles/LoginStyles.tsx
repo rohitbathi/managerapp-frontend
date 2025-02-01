@@ -3,54 +3,50 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#34495e',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
-  logincontainer: {
-    width: 800,
-    height: 400,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    paddingTop: 1,
-    borderWidth: 2.5,
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+  loginContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    padding: 40, // Increased padding for larger container
+    borderRadius: 15, // Increased border radius
+    width: 400,    // Increased width
+    // height: 300,  // You can set a specific height if needed
   },
   title: {
-    fontSize: 48,
-    fontWeight: "bold",
-    marginBottom: 50,
+    fontSize: 36,   // Increased font size
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  inputGroup: {
+    marginBottom: 25,
+  },
+  label: {
+    color: '#bdc3c7',
+    marginBottom: 8,
+    fontSize: 20,   // Increased font size
   },
   input: {
-    width: "80%",
-    height: 50,
-    borderWidth: 1.5,
-    borderColor: "black",
-    borderRadius: 5,
-    marginBottom: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    color: '#fff',
+    padding: 12,
+    borderRadius: 8,   // Increased border radius
     fontSize: 18,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    fontWeight: "bold",
-    alignContent: "center",
   },
   button: {
-    backgroundColor: "blue",
-    borderRadius: 5,
-    flexDirection: "row", // Use flexbox for layout
-    alignItems: "center", // Center items vertically
-    justifyContent: "center", // Center items horizontally
-    marginTop: 20,
-  },
-  buttonContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 5, // Add padding for better spacing
+    backgroundColor: '#3498db',
+    padding: 15,
+    borderRadius: 8,   // Increased border radius
+    alignItems: 'center',
   },
   buttonText: {
-    color: "white",
-    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 22,   // Increased font size
   },
 });
 export { styles };
