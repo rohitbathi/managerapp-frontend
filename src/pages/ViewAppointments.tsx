@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator,TouchableOpacity  } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { Agenda } from "react-native-calendars";
-import { fetchAdminAllAppointments, fetchStaffAppointments } from "../services/api";
+import {
+  fetchAdminAllAppointments,
+  fetchStaffAppointments,
+} from "../services/api";
 import { useNavigation } from "@react-navigation/native";
 import { format } from "date-fns";
 
@@ -39,8 +48,11 @@ const ViewAppointments = ({ route }) => {
             return; // Skip invalid date
           }
 
-          const sanitizedTime = rawTime.length === 5 ? `${rawTime}:00` : rawTime;
-          const fullDateTime = `${datePart.toISOString().split("T")[0]}T${sanitizedTime}`;
+          const sanitizedTime =
+            rawTime.length === 5 ? `${rawTime}:00` : rawTime;
+          const fullDateTime = `${
+            datePart.toISOString().split("T")[0]
+          }T${sanitizedTime}`;
           const validStartTime = new Date(fullDateTime);
 
           if (isNaN(validStartTime.getTime())) {
@@ -59,14 +71,13 @@ const ViewAppointments = ({ route }) => {
             customer_name: appointment.customer_name,
             service_name: appointment.service_name,
             service_id: appointment.service_id,
-            startTime:  appointment.startTime,
+            startTime: appointment.startTime,
             status: appointment.status || "N/A",
             staff_name: appointment.staff_name || "Not Assigned",
             paymentStatus: appointment.paymentStatus || "Not Paid",
             date: format(appointment.date, "yyyy-MM-dd"),
           });
         });
-
         setAppointments(formattedAppointments);
         setLoading(false); // Done loading
       } catch (error) {
@@ -82,8 +93,8 @@ const ViewAppointments = ({ route }) => {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading appointments...</Text>
+        <ActivityIndicator size="large" color="white" />
+        <Text style={styles.lable}>Loading appointments...</Text>
       </View>
     );
   }
@@ -91,7 +102,7 @@ const ViewAppointments = ({ route }) => {
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text>{error}</Text>
+        <Text style={styles.lable}>{error}</Text>
       </View>
     );
   }
@@ -101,14 +112,21 @@ const ViewAppointments = ({ route }) => {
       <Agenda
         items={appointments}
         renderItem={(item) => (
-          <TouchableOpacity
-            style={styles.item}
-            onPress={() => navigation.navigate("AppointmentDetails", {appointment:item, role })}
-          >
-            <Text>{item.customer_name}</Text>
-            <Text>{item.service_name}</Text>
-            <Text>{item.startTime}</Text>
-          </TouchableOpacity>
+          <View style={styles.agenda}>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() =>
+                navigation.navigate("AppointmentDetails", {
+                  appointment: item,
+                  role,
+                })
+              }
+            >
+              <Text style={styles.lable}>{item.customer_name}</Text>
+              <Text style={styles.lable}>{item.service_name}</Text>
+              <Text style={styles.lable}>{item.startTime}</Text>
+            </TouchableOpacity>
+          </View>
         )}
       />
     </View>
@@ -118,23 +136,27 @@ const ViewAppointments = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    height: "100%",
   },
   item: {
-    backgroundColor: "#fff",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
     margin: 10,
     padding: 15,
     borderRadius: 5,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 1,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 5,
   },
   centered: {
     flex: 1,
+    backgroundColor: "#34495e",
     justifyContent: "center",
     alignItems: "center",
   },
+  lable : {
+    color :'white',
+  }
 });
 
 export default ViewAppointments;
