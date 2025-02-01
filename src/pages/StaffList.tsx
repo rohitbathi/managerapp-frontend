@@ -76,7 +76,7 @@ const getstaffList = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
+  container: { flex: 1, padding: 20, },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
   card: { borderWidth: 1, borderRadius: 5, padding: 10, marginBottom: 10 },
 });
